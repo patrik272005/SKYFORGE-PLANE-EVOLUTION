@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Skyforge - Plane Evolution</title>
+    <link rel="stylesheet" href="css/style.css">
+    <!-- Google Fonts for sleek gaming typography -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <!-- Damage & Heal Screen Overlays -->
+    <div id="damageFlash" class="damage-flash"></div>
+    <div id="healFlash" class="heal-flash"></div>
+
+    <!-- HUD (Heads-Up Display) -->
+    <div id="hud" class="hidden">
+        <div class="hud-top">
+            <div class="hud-card score-card">
+                <span class="hud-label">SCORE</span>
+                <span id="scoreVal" class="hud-val">0</span>
+            </div>
+
+            <div class="evolution-container">
+                <div class="tier-badge">
+                    <span id="tierLabel">TIER 1</span>: <span id="planeName">ORIGAMI GLIDER</span>
+                </div>
+                <div class="progress-bar-bg">
+                    <div id="evolutionFill" class="progress-bar-fill"></div>
+                </div>
+                <div class="exp-text"><span id="expVal">0</span> / <span id="expTarget">100</span> EXP</div>
+            </div>
+
+            <div class="hud-card coins-card">
+                <span class="hud-label">COINS</span>
+                <span id="coinsVal" class="hud-val">🪙 0</span>
+            </div>
+        </div>
+
+        <div class="hud-sub">
+            <div class="health-container">
+                <span class="hud-label">SHIELD</span>
+                <div class="health-bar-bg">
+                    <div id="healthFill" class="health-bar-fill"></div>
+                </div>
+                <span id="healthText" class="health-text">3 / 3</span>
+            </div>
+            <div class="hud-actions">
+                <button id="pauseBtn" class="hud-btn" title="Pause Game [Esc / P]">⏸️</button>
+                <button id="soundToggleBtn" class="hud-btn" title="Toggle Sound">🔊</button>
+                <button id="hudExitBtn" class="hud-btn" title="Exit to Menu">🚪</button>
+            </div>
+        </div>
+
+        <div class="controls-hint">
+            <span>🖱️ Drag / Arrow Keys to Steer &bull; Collect 🟢 Nanites & Gates to Heal &bull; [Esc/P] Pause</span>
+        </div>
+    </div>
+
+    <!-- PAUSE MODAL -->
+    <div id="pauseModal" class="hidden">
+        <div class="modal-card pause-card">
+            <div class="pause-badge">SYSTEM SUSPENDED</div>
+            <h2>MISSION PAUSED</h2>
+            <p class="pause-subtitle">Airspeed stabilized &bull; Avionics holding position</p>
+
+            <div class="pause-stats">
+                <div class="stat-box">
+                    <span class="stat-label">CURRENT SCORE</span>
+                    <span id="pauseScore" class="stat-val">0</span>
+                </div>
+                <div class="stat-box">
+                    <span class="stat-label">DISTANCE</span>
+                    <span id="pauseDistance" class="stat-val">0 m</span>
+                </div>
+            </div>
+
+            <div class="modal-actions-col">
+                <button id="resumeButton" class="action-btn primary-btn">▶️ RESUME FLIGHT</button>
+                <button id="pauseRestartButton" class="action-btn secondary-btn">🔄 RESTART</button>
+                <button id="pauseExitButton" class="action-btn danger-btn">🚪 EXIT TO MENU</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN START MENU -->
+    <div id="game">
+        <div class="menu-content">
+            <div class="logo-badge">3D AERIAL RUNNER</div>
+            <h1 class="glow-title">SKYFORGE</h1>
+            <p class="subtitle">PLANE EVOLUTION</p>
+
+            <!-- 5 Interactive Selectable Era Options -->
+            <div class="era-selector-title">CHOOSE STARTING AIRCRAFT</div>
+            <div class="era-preview-row" id="eraSelectorRow">
+                <button class="era-chip active" data-tier="0" title="Origami Glider">1. Paper Dart</button>
+                <button class="era-chip" data-tier="1" title="Vintage Biplane">2. Biplane</button>
+                <button class="era-chip" data-tier="2" title="Warbird Fighter">3. Warbird</button>
+                <button class="era-chip" data-tier="3" title="Supersonic Jet">4. Supersonic</button>
+                <button class="era-chip" data-tier="4" title="Skyforge Starfighter">5. Starfighter</button>
+            </div>
+
+            <!-- Era Stats Preview Card -->
+            <div id="eraStatsPreview" class="era-stats-preview">
+                <div class="preview-plane-title" id="previewPlaneTitle">Tier 1: Origami Glider</div>
+                <div class="preview-specs-grid">
+                    <div class="spec-item"><span>ARMOR:</span> <b id="previewArmor">3 Shields</b></div>
+                    <div class="spec-item"><span>WEAPON:</span> <b id="previewWeapon">Dart Cannons (1x)</b></div>
+                    <div class="spec-item"><span>FIRE RATE:</span> <b id="previewRate">Fast</b></div>
+                    <div class="spec-item"><span>FEATURE:</span> <b id="previewFeature">Nimble Aerodynamics</b></div>
+                </div>
+            </div>
+
+            <div class="menu-instructions">
+                <p>Pass through <b style="color: #00ff88;">Green Upgrade & Repair Gates</b> to evolve & heal.</p>
+                <p>Blast through aerial obstacles & collect gold coins!</p>
+                <p>Avoid <b style="color: #ff3366;">Red Hazard Gates</b>, heavy barriers, and explosive mines.</p>
+            </div>
+
+            <button id="startButton">LAUNCH FLIGHT</button>
+            <div class="credits-hint">Steer: Mouse, Touch, or [A / D / &larr; &rarr;] &bull; [Esc/P] Pause</div>
+        </div>
+    </div>
+
+    <!-- GAME OVER / RESULT MODAL -->
+    <div id="gameOverModal" class="hidden">
+        <div class="modal-card">
+            <h2 id="gameOverTitle">💥 AIRCRAFT DESTROYED 💥</h2>
+            <p id="destructionReason" class="destruction-reason">Hull Compromised &bull; Obliterated in Mid-Air</p>
+            <div class="final-tier-icon" id="finalPlaneIcon">✈️</div>
+            <p class="final-tier-name" id="finalTierName">Tier 3: Warbird Fighter</p>
+
+            <div class="stats-grid">
+                <div class="stat-box">
+                    <span class="stat-label">FINAL SCORE</span>
+                    <span id="finalScore" class="stat-val">0</span>
+                </div>
+                <div class="stat-box">
+                    <span class="stat-label">COINS</span>
+                    <span id="finalCoins" class="stat-val">0</span>
+                </div>
+                <div class="stat-box">
+                    <span class="stat-label">DISTANCE</span>
+                    <span id="finalDistance" class="stat-val">0 m</span>
+                </div>
+                <div class="stat-box">
+                    <span class="stat-label">GATES PASSED</span>
+                    <span id="finalGates" class="stat-val">0</span>
+                </div>
+            </div>
+
+            <div class="modal-actions-row">
+                <button id="restartButton" class="action-btn primary-btn">FLY AGAIN</button>
+                <button id="exitButton" class="action-btn secondary-btn">EXIT TO MENU</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- LEVEL UP BANNER ANNOUNCEMENT -->
+    <div id="levelUpBanner" class="level-up-banner hidden">
+        <div class="banner-title">⚡ AIRCRAFT EVOLVED! ⚡</div>
+        <div id="bannerTierName" class="banner-sub">TIER 2: VINTAGE BIPLANE</div>
+    </div>
+
+    <!-- Reliable, verified Three.js CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="js/main.js"></script>
+
+</body>
+</html>
